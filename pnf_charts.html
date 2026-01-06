@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P&F Visual Dashboard</title>
+    <style>
+        /* General layout and background */
+        body { font-family: 'Segoe UI', sans-serif; margin: 10px; background-color: #f4f7f6; }
+        .container { width: 98%; margin: auto; background: white; padding: 10px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        /* Input area styling */
+        textarea { width: 100%; height: 50px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; margin-bottom: 10px; }
+        
+        /* Table styling for ultra-compact fit */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 2px; text-align: center; vertical-align: top; background-color: #fff; }
+        
+        /* Header widths to support 800px charts */
+        th { background-color: #f8f9fa; color: #333; padding: 8px; min-width: 805px; border-bottom: 2px solid #ccc; }
+        th:first-child { min-width: 80px; width: 80px; }
+
+        /* Ticker and Link typography */
+        .ticker-name { font-weight: bold; font-size: 18px; color: #1a73e8; display: block; margin-top: 10px; }
+        .chart-link { display: block; margin-bottom: 5px; color: #007bff; text-decoration: none; font-weight: 600; font-size: 13px; }
+        
+        /* Scrollable container for charts with persistent scrollbar */
+        .chart-scroll-container {
+            width: 100%;
+            height: 800px;
+            overflow-y: scroll; 
+            overflow-x: auto;
+            border: 1px solid #eee;
+            margin: 0 auto;
+            background: #fff;
+            padding: 2px; 
+            box-sizing: border-box;
+        }
+
+        .chart-preview { display: block; margin: 0 auto; max-width: none; }
+
+        /* Button styling */
+        .btn { background: #1a73e8; color: white; padding: 8px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background: #1557b0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <textarea id="tickerList" placeholder="Enter tickers (e.g. GLD, NVDA, ARM)">GLD, GLDM, GDX, SLV, SVM, AAPL, AMZN, GOOG, META, MSFT, NVDA, PLTR, TSLA, ARM, COST, DGRO, IEMG, JEPQ, LRCX, MU, QCOM, QQQM, SMH, SPMO, TSM, V, VGT, AES, ALT, CTRA, ELVR, FOX, HAS, HYLN, LUNR, MRK, NBIS, SLS, SYD</textarea>
+    <button class="btn" onclick="generateTable()">Update Dashboard</button>
+
+    <div style="overflow-x: auto;">
+        <table id="resultsTable">
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>0.25% Scale</th>
+                    <th>1.0% Scale</th>
+                    <th>3.0% Scale</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function generateTable() {
+        const input = document.getElementById('tickerList').value;
+        const tbody = document.getElementById('tableBody');
+        // Supports comma or space separation
+        const tickers = input.split(/[,\s]+/).filter(t => t.trim() !== "");
+        
+        tbody.innerHTML = ""; 
+
+        tickers.forEach(symbol => {
+            const sym = symbol.toUpperCase().trim();
+            const row = document.createElement('tr');
+            
+            // StockCharts URL construction
+            const imgBase = "https://stockcharts.com/pnf/chart?c=";
+            const imgSuffix = "&pnf=y"; 
+            const linkBase = "https://stockcharts.com/freecharts/pnf.php?c=";
+
+            row.innerHTML = `
+                <td><span class="ticker-name">${sym}</span></td>
+                ${createCell(sym, '0.25', linkBase, imgBase, imgSuffix)}
+                ${createCell(sym, '1', linkBase, imgBase, imgSuffix)}
+                ${createCell(sym, '3', linkBase, imgBase, imgSuffix)}
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function createCell(sym, scale, linkBase, imgBase, suffix) {
+        const params = `${sym},PWPADANRNO[PA][D][F1!3!${scale}!!2!20]`;
+        const fullLink = `${linkBase}${params}`;
+        const fullImg = `${imgBase}${params}${suffix}`;
+
+        return `
+            <td>
+                <a href="${fullLink}" target="_blank" class="chart-link">Open ${sym} with box size ${scale}%</a>
+                <div class="chart-scroll-container">
+                    <img 
+                        src="${fullImg}" 
+                        class="chart-preview" 
+                        alt="${sym} ${scale}% Chart"
+                        loading="lazy"
+                    >
+                </div>
+            </td>
+        `;
+    }
+
+    // Initial table generation on page load
+    window.onload = generateTable;
+</script>
+
+</body>
+</html>

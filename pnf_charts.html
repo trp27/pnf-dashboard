@@ -7,45 +7,57 @@
     <title>P&F Visual Dashboard</title>
     <style>
         /* General layout and background */
-        body { font-family: 'Segoe UI', sans-serif; margin: 10px; background-color: #f4f7f6; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 10px; background-color: #f4f7f6; padding-top: 60px; /* Space for the pinned menu */ }
         .container { width: 98%; margin: auto; background: white; padding: 10px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
-        /* Input area styling */
+        /* Floating Navigation Menu */
+        #nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #1a73e8;
+            padding: 10px;
+            z-index: 1000;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            max-height: 50px;
+            overflow-y: auto;
+        }
+        #nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+        }
+        #nav-menu a:hover { background: rgba(255,255,255,0.3); }
+
         textarea { width: 100%; height: 50px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; margin-bottom: 10px; }
         
-        /* Table styling for ultra-compact fit */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 2px; text-align: center; vertical-align: top; background-color: #fff; }
         
-        /* Header widths to support 800px charts */
         th { background-color: #f8f9fa; color: #333; padding: 8px; min-width: 505px; border-bottom: 2px solid #ccc; }
         th:first-child { min-width: 80px; width: 80px; }
 
-        /* Ticker and Link typography */
         .ticker-name { font-weight: bold; font-size: 18px; color: #1a73e8; display: block; margin-top: 10px; }
         .chart-link { display: block; margin-bottom: 5px; color: #007bff; text-decoration: none; font-weight: 600; font-size: 13px; }
         
-        /* Scrollable container for charts with persistent scrollbar */
-        .chart-scroll-container {
-            width: 100%;
-            height: 500px;
-            overflow-y: scroll; 
-            overflow-x: auto;
-            border: 1px solid #eee;
-            margin: 0 auto;
-            background: #fff;
-            padding: 2px; 
-            box-sizing: border-box;
-        }
-
+        .chart-scroll-container { width: 100%; height: 500px; overflow-y: scroll; overflow-x: auto; border: 1px solid #eee; margin: 0 auto; background: #fff; padding: 2px; box-sizing: border-box; }
         .chart-preview { display: block; margin: 0 auto; max-width: none; }
 
-        /* Button styling */
         .btn { background: #1a73e8; color: white; padding: 8px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
         .btn:hover { background: #1557b0; }
     </style>
 </head>
 <body>
+
+<div id="nav-menu"></div>
 
 <div class="container">
     <textarea id="tickerList" placeholder="Enter tickers (e.g. GLD, NVDA, ARM)">GLD, GLDM, GDX, SLV, SVM, AAPL, AMZN, GOOG, META, MSFT, NVDA, PLTR, TSLA, ARM, COST, DGRO, IEMG, JEPQ, LRCX, MU, QCOM, QQQM, SMH, SPMO, TSM, V, VGT, AES, ALT, CTRA, ELVR, FOX, HAS, HYLN, LUNR, MRK, NBIS, SLS, SYD</textarea>
@@ -70,16 +82,23 @@
     function generateTable() {
         const input = document.getElementById('tickerList').value;
         const tbody = document.getElementById('tableBody');
-        // Supports comma or space separation
+        const nav = document.getElementById('nav-menu');
         const tickers = input.split(/[,\s]+/).filter(t => t.trim() !== "");
         
         tbody.innerHTML = ""; 
+        nav.innerHTML = ""; // Clear old menu
 
         tickers.forEach(symbol => {
             const sym = symbol.toUpperCase().trim();
             const row = document.createElement('tr');
-            
-            // StockCharts URL construction
+            row.id = "target-" + sym; // Add ID for navigation anchor
+
+            // Add link to floating menu
+            const navLink = document.createElement('a');
+            navLink.href = "#target-" + sym;
+            navLink.innerText = sym;
+            nav.appendChild(navLink);
+
             const imgBase = "https://stockcharts.com/pnf/chart?c=";
             const imgSuffix = "&pnf=y"; 
             const linkBase = "https://stockcharts.com/freecharts/pnf.php?c=";
@@ -95,6 +114,7 @@
     }
 
     function createCell(sym, scale, linkBase, imgBase, suffix) {
+        // Updated params based on your source logic
         const params = `${sym},PLPADANCNO[PA][D][F1!3!${scale}!!2!20]`;
         const fullLink = `${linkBase}${params}`;
         const fullImg = `${imgBase}${params}${suffix}`;
@@ -103,22 +123,14 @@
             <td>
                 <a href="${fullLink}" target="_blank" class="chart-link">Open ${sym} with box size ${scale}%</a>
                 <div class="chart-scroll-container">
-                    <img 
-                        src="${fullImg}" 
-                        class="chart-preview" 
-                        alt="${sym} ${scale}% Chart"
-                        loading="lazy"
-                    >
+                    <img src="${fullImg}" class="chart-preview" alt="${sym} ${scale}% Chart" loading="lazy" >
                 </div>
             </td>
         `;
     }
 
-    // Initial table generation on page load
     window.onload = generateTable;
 </script>
 
 </body>
-
 </html>
-

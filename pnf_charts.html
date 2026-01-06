@@ -18,7 +18,7 @@
         th, td { border: 1px solid #ddd; padding: 2px; text-align: center; vertical-align: top; background-color: #fff; }
         
         /* Header widths to support 800px charts */
-        th { background-color: #f8f9fa; color: #333; padding: 8px; min-width: 805px; border-bottom: 2px solid #ccc; }
+        th { background-color: #f8f9fa; color: #333; padding: 8px; min-width: 505px; border-bottom: 2px solid #ccc; }
         th:first-child { min-width: 80px; width: 80px; }
 
         /* Ticker and Link typography */
@@ -28,7 +28,7 @@
         /* Scrollable container for charts with persistent scrollbar */
         .chart-scroll-container {
             width: 100%;
-            height: 800px;
+            height: 500px;
             overflow-y: scroll; 
             overflow-x: auto;
             border: 1px solid #eee;
@@ -95,7 +95,7 @@
     }
 
     function createCell(sym, scale, linkBase, imgBase, suffix) {
-        const params = `${sym},PWPADANRNO[PA][D][F1!3!${scale}!!2!20]`;
+        const params = `${sym},PLPADANCNO[PA][D][F1!3!${scale}!!2!20]`;
         const fullLink = `${linkBase}${params}`;
         const fullImg = `${imgBase}${params}${suffix}`;
 
@@ -121,3 +121,4 @@
 </body>
 
 </html>
+

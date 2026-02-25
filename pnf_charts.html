@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,23 @@
     <title>P&F Visual Dashboard</title>
     <style>
         /* General layout and background */
-        body { font-family: 'Segoe UI', sans-serif; margin: 10px; background-color: #f4f7f6; padding-top: 60px; /* Space for the pinned menu */ }
-        .container { width: 98%; margin: auto; background: white; padding: 10px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 10px;
+            background-color: #f4f7f6;
+            padding-top: 60px;
+            /* Space for the pinned menu */
+        }
+
+        .container {
+            width: 98%;
+            margin: auto;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
         /* Floating Navigation Menu */
         #nav-menu {
             position: fixed;
@@ -22,116 +37,202 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             max-height: 50px;
             overflow-y: auto;
         }
+
         #nav-menu a {
             color: white;
             text-decoration: none;
             font-size: 12px;
             font-weight: bold;
             padding: 2px 6px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 3px;
         }
-        #nav-menu a:hover { background: rgba(255,255,255,0.3); }
 
-        textarea { width: 100%; height: 50px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; margin-bottom: 10px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 2px; text-align: center; vertical-align: top; background-color: #fff; }
-        
-        th { background-color: #f8f9fa; color: #333; padding: 8px; min-width: 505px; border-bottom: 2px solid #ccc; }
-        th:first-child { min-width: 80px; width: 80px; }
+        #nav-menu a:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
 
-        .ticker-name { font-weight: bold; font-size: 18px; color: #1a73e8; display: block; margin-top: 10px; }
-        .chart-link { display: block; margin-bottom: 5px; color: #007bff; text-decoration: none; font-weight: 600; font-size: 13px; }
-        
-        .chart-scroll-container { width: 100%; height: 500px; overflow-y: scroll; overflow-x: auto; border: 1px solid #eee; margin: 0 auto; background: #fff; padding: 2px; box-sizing: border-box; }
-        .chart-preview { display: block; margin: 0 auto; max-width: none; }
+        textarea {
+            width: 100%;
+            height: 50px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
 
-        .btn { background: #1a73e8; color: white; padding: 8px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .btn:hover { background: #1557b0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 2px;
+            text-align: center;
+            vertical-align: top;
+            background-color: #fff;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 8px;
+            min-width: 505px;
+            border-bottom: 2px solid #ccc;
+        }
+
+        th:first-child {
+            min-width: 80px;
+            width: 80px;
+        }
+
+        .ticker-name {
+            font-weight: bold;
+            font-size: 18px;
+            color: #1a73e8;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .chart-link {
+            display: block;
+            margin-bottom: 5px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .chart-scroll-container {
+            width: 100%;
+            height: 500px;
+            overflow-y: scroll;
+            overflow-x: auto;
+            border: 1px solid #eee;
+            margin: 0 auto;
+            background: #fff;
+            padding: 2px;
+            box-sizing: border-box;
+        }
+
+        .chart-preview {
+            display: block;
+            margin: 0 auto;
+            max-width: none;
+        }
+
+        .btn {
+            background: #1a73e8;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #1557b0;
+        }
     </style>
 </head>
+
 <body>
 
-<div id="nav-menu"></div>
+    <div id="nav-menu"></div>
 
-<div class="container">
-    <textarea id="tickerList" placeholder="Enter tickers (e.g. GLD, NVDA, ARM)">GLD, GLDM, GDX, SLV, SVM, AAPL, AMZN, GOOG, META, MSFT, NVDA, PLTR, TSLA, ARM, COST, DGRO, IEMG, JEPQ, LRCX, MU, QCOM, QQQM, SMH, SPMO, TSM, V, VGT, AES, ALT, CTRA, ELVR, FOX, HAS, HYLN, LUNR, MRK, NBIS, SLS, SYF</textarea>
-    <button class="btn" onclick="generateTable()">Update Dashboard</button>
+    <div class="container">
+        <textarea id="tickerList"
+            placeholder="Enter tickers (e.g. GLD, NVDA, ARM)">GLD, GLDM, GDX, SLV, SVM, AAPL, AMZN, GOOG, META, MSFT, NVDA, PLTR, TSLA, ARM, COST, DGRO, IEMG, JEPQ, LRCX, MU, QCOM, QQQM, SMH, SPMO, TSM, V, VGT, AES, ALT, CTRA, ELVR, FOX, HAS, HYLN, LUNR, MRK, NBIS, SLS, SYF</textarea>
+        <button class="btn" onclick="generateTable()">Update Dashboard</button>
 
-    <div style="overflow-x: auto;">
-        <table id="resultsTable">
-            <thead>
-                <tr>
-                    <th>Ticker</th>
-                    <th>0.25% Scale</th>
-                    <th>1.0% Scale</th>
-                    <th>3.0% Scale</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
+        <div style="overflow-x: auto;">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Ticker</th>
+                        <th>0.25% Scale</th>
+                        <th>1.0% Scale</th>
+                        <th>3.0% Scale</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
     </div>
-</div>
 
-<script>
-    function generateTable() {
-        const input = document.getElementById('tickerList').value;
-        const tbody = document.getElementById('tableBody');
-        const nav = document.getElementById('nav-menu');
-        const tickers = input.split(/[,\s]+/).filter(t => t.trim() !== "");
-        
-        tbody.innerHTML = ""; 
-        nav.innerHTML = ""; // Clear old menu
+    <script>
+        function generateTable() {
+            const input = document.getElementById('tickerList').value;
+            const tbody = document.getElementById('tableBody');
+            const nav = document.getElementById('nav-menu');
+            const tickers = input.split(/[,\s]+/).filter(t => t.trim() !== "");
 
-        tickers.forEach(symbol => {
-            const sym = symbol.toUpperCase().trim();
-            const row = document.createElement('tr');
-            row.id = "target-" + sym; // Add ID for navigation anchor
+            tbody.innerHTML = "";
+            nav.innerHTML = ""; // Clear old menu
 
-            // Add link to floating menu
-            const navLink = document.createElement('a');
-            navLink.href = "#target-" + sym;
-            navLink.innerText = sym;
-            nav.appendChild(navLink);
+            tickers.forEach(symbol => {
+                const sym = symbol.toUpperCase().trim();
+                const row = document.createElement('tr');
+                row.id = "target-" + sym; // Add ID for navigation anchor
 
-            const imgBase = "https://stockcharts.com/pnf/chart?c=";
-            const imgSuffix = "&pnf=y"; 
-            const linkBase = "https://stockcharts.com/freecharts/pnf.php?c=";
+                // Add link to floating menu
+                const navLink = document.createElement('a');
+                navLink.href = "#target-" + sym;
+                navLink.innerText = sym;
+                nav.appendChild(navLink);
 
-            row.innerHTML = `
+                const imgBase = "https://stockcharts.com/pnf/chart?c=";
+                const imgSuffix = "&pnf=y";
+                const linkBase = "https://stockcharts.com/freecharts/pnf.php?c=";
+
+                row.innerHTML = `
                 <td><span class="ticker-name">${sym}</span></td>
                 ${createCell(sym, '0.25', linkBase, imgBase, imgSuffix)}
                 ${createCell(sym, '1', linkBase, imgBase, imgSuffix)}
                 ${createCell(sym, '3', linkBase, imgBase, imgSuffix)}
             `;
-            tbody.appendChild(row);
-        });
-    }
+                tbody.appendChild(row);
+            });
+        }
 
-    function createCell(sym, scale, linkBase, imgBase, suffix) {
-        // Updated params based on your source logic
-        const params = `${sym},PLPADANCNO[PA][D][F1!3!${scale}!!2!20]`;
-        const fullLink = `${linkBase}${params}`;
-        const fullImg = `${imgBase}${params}${suffix}`;
+        function createCell(sym, scale, linkBase, imgBase, suffix) {
+            // Regular chart params
+            const params = `${sym},PLPADANCNO[PA][D][F1!3!${scale}!!2!20]`;
+            const fullLink = `${linkBase}${params}`;
+            const fullImg = `${imgBase}${params}${suffix}`;
 
-        return `
+            // Relative Strength chart params
+            const paramsRS = `${sym}%3A%24SPX,PLPADANRNO[PB10][D][F1!3!${scale}!!2!20]`;
+            const fullLinkRS = `${linkBase}${paramsRS}`;
+            const fullImgRS = `${imgBase}${paramsRS}${suffix}`;
+
+            return `
             <td>
                 <a href="${fullLink}" target="_blank" class="chart-link">Open ${sym} with box size ${scale}%</a>
                 <div class="chart-scroll-container">
                     <img src="${fullImg}" class="chart-preview" alt="${sym} ${scale}% Chart" loading="lazy" >
                 </div>
+                <hr style="border: 1px solid #ddd; margin: 15px 0;">
+                <a href="${fullLinkRS}" target="_blank" class="chart-link" style="color: #28a745;">Open ${sym} vs SPX (RS) with box size ${scale}%</a>
+                <div class="chart-scroll-container">
+                    <img src="${fullImgRS}" class="chart-preview" alt="${sym} RS ${scale}% Chart" loading="lazy" >
+                </div>
             </td>
         `;
-    }
+        }
 
-    window.onload = generateTable;
-</script>
+        window.onload = generateTable;
+    </script>
 
 </body>
-</html>
 
+</html>

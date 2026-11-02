@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>P&F Visual Dashboard</title>
+    <title>P&amp;F Visual Dashboard</title>
     <style>
         /* General layout and background */
         body {
@@ -151,7 +151,7 @@
 
     <div class="container">
         <textarea id="tickerList"
-            placeholder="Enter tickers (e.g. GLD, NVDA, ARM)">GLD, GLDM, GDX, SLV, SVM, AAPL, AMZN, GOOG, META, MSFT, NVDA, PLTR, TSLA, ARM, COST, DGRO, IEMG, JEPQ, LRCX, MU, QCOM, QQQM, SMH, SPMO, TSM, V, VGT, AES, ALT, CTRA, ELVR, FOX, HAS, HYLN, LUNR, MRK, NBIS, SLS, SYF</textarea>
+            placeholder="Enter tickers (e.g. GLD, NVDA, ARM)">GLD, GLDM, GDX, SLV, SVM, AAPL, AMZN, GOOG, META, MSFT, NVDA, PLTR, TSLA, ARM, COST, DGRO, IEMG, JEPQ, LRCX, MU, QCOM, QQQM, SMH, SPMO</textarea>
         <button class="btn" onclick="generateTable()">Update Dashboard</button>
 
         <div style="overflow-x: auto;">
@@ -170,17 +170,28 @@
     </div>
 
     <script>
+        function initializeDashboard() {
+            const params = new URLSearchParams(window.location.search);
+            const tickerParam = params.get('tickers') || params.get('symbols') || params.get('list') || params.get('t');
+
+            if (tickerParam !== null) {
+                document.getElementById('tickerList').value = tickerParam;
+            }
+            generateTable();
+        }
+
         function generateTable() {
             const input = document.getElementById('tickerList').value;
             const tbody = document.getElementById('tableBody');
             const nav = document.getElementById('nav-menu');
-            const tickers = input.split(/[,\s]+/).filter(t => t.trim() !== "");
+            const tickers = input.split(/[ ,\s]+/)
+                .map(t => t.trim().toUpperCase())
+                .filter(t => /^[A-Z0-9.^$-]+$/.test(t));
 
             tbody.innerHTML = "";
             nav.innerHTML = ""; // Clear old menu
 
-            tickers.forEach(symbol => {
-                const sym = symbol.toUpperCase().trim();
+            tickers.forEach(sym => {
                 const row = document.createElement('tr');
                 row.id = "target-" + sym; // Add ID for navigation anchor
 
@@ -230,7 +241,7 @@
         `;
         }
 
-        window.onload = generateTable;
+        window.onload = initializeDashboard;
     </script>
 
 </body>
